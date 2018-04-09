@@ -1,10 +1,19 @@
 from sklearn.cluster import KMeans
+from kmeans import fit #my class
 
 class Pixel:
     def set(self, r, g, b):
         self.r = r
         self.g = g
         self.b = b
+
+    def __getitem__(self, item): #overload [] operator for easier indexing
+        if item == 0:
+            return self.r
+        elif item == 1:
+            return self.g
+        elif item == 2:
+            return self.b
 
 class Image:
     def read_img(self, path):
@@ -23,7 +32,6 @@ class Image:
             Pixel.set(p,ord(self.raw[i]), ord(self.raw[i+1]), ord(self.raw[i+2]))
             self.pix.append(p)
 
-
     def write_img(self, path):
         f = open(path, 'wr')
         f.write('P6\n')
@@ -41,16 +49,21 @@ class Image:
 
         f.close()
 
+#ndarray to pixel list
+def convert(arrays):
+    out = []
+    for i in range(len(arrays)):
+        p = Pixel()
+        p.set(int(arrays[i][0]),int(arrays[i][1]),int(arrays[i][2]))
+        out.append(p)
+    return out
 
+if __name__ == "__main__":
+    img = Image()
+    img.read_img('/Users/davidclevenger/PycharmProjects/Pattern-Recognition/flowers.ppm')
+    new = convert(fit(16,img.pix))
 
-
-img = Image()
-img.read_img('/Users/davidclevenger/PycharmProjects/Pattern-Recognition/flowers.ppm')
-#print img.t, img.max
-
-#model = KMeans(8,n_jobs=-1)
-#y = model.fit_transform(img.data)
-#print y
-img.write_img('/Users/davidclevenger/PycharmProjects/Pattern-Recognition/flowers-comp.ppm')
+    img.pix = new
+    img.write_img('/Users/davidclevenger/PycharmProjects/Pattern-Recognition/flowers-comp.ppm')
 
 
