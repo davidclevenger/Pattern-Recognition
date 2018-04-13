@@ -1,3 +1,5 @@
+import numpy as np
+
 class Pixel:
     def set(self, r, g, b):
         self.r = r
@@ -54,3 +56,30 @@ def convert(arrays):
         p.set(int(arrays[i][0]),int(arrays[i][1]),int(arrays[i][2]))
         out.append(p)
     return out
+
+#pixel list to ndarray
+def revert(pixels):
+    out = []
+    for i in range(len(pixels)):
+        out.append([pixels[i][0], pixels[i][1], pixels[i][2] ])
+    return out
+
+#squared error
+def __se(p1,p2):
+    sum = (p1[0]-p2[0])**2 + (p1[1]-p2[1])**2 + (p1[2]-p2[2])**2
+    return sum
+
+#mean squared error between two images versions
+def mse(pixelsA, pixelsB):
+    sum = 0
+    for i in range(len(pixelsA)):
+        sum += __se(pixelsA[i], pixelsB[i])
+    return sum / float(len(pixelsA))
+
+#peak signal to noise ratio
+def psnr(pixelsA, pixelsB):
+    return 20*np.log10(255./np.sqrt(mse(pixelsA, pixelsB)))
+
+#general performance function
+def performance(par, pixelsA, pixelsB):
+    print str(par), mse(pixelsA, pixelsB), psnr(pixelsA, pixelsB)
